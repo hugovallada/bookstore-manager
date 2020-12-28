@@ -1,7 +1,9 @@
 package com.hugovallada.bookstoremanager.users.entity;
 
 import com.hugovallada.bookstoremanager.books.entity.Book;
+import com.hugovallada.bookstoremanager.entity.Auditable;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -9,7 +11,7 @@ import java.util.List;
 
 @Data
 @Entity
-public class User {
+public class User extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
