@@ -8,6 +8,9 @@ import com.hugovallada.bookstoremanager.author.repository.AuthorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service // transforma em um serviço gerenciado pelo spring - implementa a lógica de negócio
 public class AuthorService {
 
@@ -33,6 +36,13 @@ public class AuthorService {
         var foundAuthor = authorRepository.findById(id)
                 .orElseThrow(() -> new AuthorNotFoundException(id));
         return authorMapper.toDTO(foundAuthor);
+    }
+
+    public List<AuthorDTO> findAll() {
+        return authorRepository.findAll()
+                .stream()
+                .map(authorMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     private void verifyIfExists(String authorName) {
