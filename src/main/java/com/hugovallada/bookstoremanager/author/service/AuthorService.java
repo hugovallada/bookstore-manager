@@ -2,6 +2,7 @@ package com.hugovallada.bookstoremanager.author.service;
 
 import com.hugovallada.bookstoremanager.author.dto.AuthorDTO;
 import com.hugovallada.bookstoremanager.author.exception.AuthorAlreadyExistsException;
+import com.hugovallada.bookstoremanager.author.exception.AuthorNotFoundException;
 import com.hugovallada.bookstoremanager.author.mapper.AuthorMapper;
 import com.hugovallada.bookstoremanager.author.repository.AuthorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +29,15 @@ public class AuthorService {
         return authorMapper.toDTO(createdAuthor);
     }
 
+    public AuthorDTO findById(Long id) {
+        var foundAuthor = authorRepository.findById(id)
+                .orElseThrow(() -> new AuthorNotFoundException(id));
+        return authorMapper.toDTO(foundAuthor);
+    }
+
     private void verifyIfExists(String authorName) {
         authorRepository.findByName(authorName)
-                .ifPresent(author ->{
+                .ifPresent(author -> {
                     throw new AuthorAlreadyExistsException(author.getName());
                 });
     }

@@ -15,7 +15,7 @@ public class AuthorController implements AuthorControllerDocs {
     private AuthorService authorService;
 
     @Autowired
-    public AuthorController(AuthorService authorService){
+    public AuthorController(AuthorService authorService) {
         this.authorService = authorService;
     }
 
@@ -23,5 +23,10 @@ public class AuthorController implements AuthorControllerDocs {
     @ResponseStatus(HttpStatus.CREATED)
     public AuthorDTO create(@RequestBody @Valid AuthorDTO authorDTO) {
         return authorService.create(authorDTO);
+    }
+
+    @GetMapping("/{id}")
+    public AuthorDTO findById(@PathVariable Long id) {
+        return authorService.findById(id);
     }
 }
