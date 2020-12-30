@@ -1,6 +1,7 @@
 package com.hugovallada.bookstoremanager.author.service;
 
 import com.hugovallada.bookstoremanager.author.dto.AuthorDTO;
+import com.hugovallada.bookstoremanager.author.entity.Author;
 import com.hugovallada.bookstoremanager.author.exception.AuthorAlreadyExistsException;
 import com.hugovallada.bookstoremanager.author.exception.AuthorNotFoundException;
 import com.hugovallada.bookstoremanager.author.mapper.AuthorMapper;
@@ -33,9 +34,13 @@ public class AuthorService {
     }
 
     public AuthorDTO findById(Long id) {
-        var foundAuthor = authorRepository.findById(id)
-                .orElseThrow(() -> new AuthorNotFoundException(id));
+        Author foundAuthor = verifyAndGetAuthor(id);
         return authorMapper.toDTO(foundAuthor);
+    }
+
+    private Author verifyAndGetAuthor(Long id) {
+        return authorRepository.findById(id)
+                .orElseThrow(() -> new AuthorNotFoundException(id));
     }
 
     public List<AuthorDTO> findAll() {
@@ -43,6 +48,11 @@ public class AuthorService {
                 .stream()
                 .map(authorMapper::toDTO)
                 .collect(Collectors.toList());
+    }
+
+    public void delete(Long id) {
+        var foundAuthor = verifyAndGetAuthor(id);
+        authorRepository.deleteById(id);
     }
 
     private void verifyIfExists(String authorName) {

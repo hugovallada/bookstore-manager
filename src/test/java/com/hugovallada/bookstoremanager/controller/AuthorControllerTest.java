@@ -104,4 +104,16 @@ public class AuthorControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].name", Is.is(expectedFoundAuthorDTO.getName())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].age", Is.is(expectedFoundAuthorDTO.getAge())));
     }
+
+    @Test
+    void whenDELETEwithValidIdIsCalledThenNoContentShouldBeReturned() throws Exception {
+        var expectedAuthorDeletedDTO = authorDTOBuilder.buildAuthorDTO();
+
+        Mockito.doNothing()
+                .when(authorService).delete(expectedAuthorDeletedDTO.getId());
+
+        mockMvc.perform(MockMvcRequestBuilders.delete(AUTHOR_API_URL_PATH + "/" + expectedAuthorDeletedDTO.getId())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
+    }
 }
