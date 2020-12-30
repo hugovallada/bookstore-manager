@@ -5,9 +5,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import org.springframework.web.bind.annotation.RequestBody;
-
-import javax.validation.Valid;
 
 @Api("Authors managements")
 public interface AuthorControllerDocs {
@@ -18,4 +15,12 @@ public interface AuthorControllerDocs {
             @ApiResponse(code = 400, message = "Missing required fields or invalid values")
     })
     AuthorDTO create(AuthorDTO authorDTO);
+
+
+    @ApiOperation(value = "Find author by id operation")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success on the request"),
+            @ApiResponse(code = 404, message = "Author not found error code")
+    })
+    AuthorDTO findById(Long id);
 }

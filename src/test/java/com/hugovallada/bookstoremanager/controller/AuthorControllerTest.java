@@ -1,12 +1,7 @@
 package com.hugovallada.bookstoremanager.controller;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.hugovallada.bookstoremanager.author.builder.AuthorDTOBuilder;
 import com.hugovallada.bookstoremanager.author.controller.AuthorController;
-import com.hugovallada.bookstoremanager.author.dto.AuthorDTO;
 import com.hugovallada.bookstoremanager.author.service.AuthorService;
 import com.hugovallada.bookstoremanager.utils.JsonConversionUtils;
 import org.hamcrest.core.Is;
@@ -16,11 +11,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.client.match.MockRestRequestMatchers;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -78,5 +71,20 @@ public class AuthorControllerTest {
                 .content(JsonConversionUtils.asJsonString(expectedCreatedAuthorDTO)))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
 
+    }
+
+    @Test
+    void whenGETwithValidaIdIsCalledThenStatusOKShouldBeReturned() throws Exception {
+        var expectedFoundAuthorDTO = authorDTOBuilder.buildAuthorDTO();
+
+        Mockito.when(authorService.findById(expectedFoundAuthorDTO.getId()))
+                .thenReturn(expectedFoundAuthorDTO);
+
+        mockMvc.perform(MockMvcRequestBuilders.get(AUTHOR_API_URL_PATH + "/" + expectedFoundAuthorDTO.getId())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id", Is.is(expectedFoundAuthorDTO.getId().intValue())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name", Is.is(expectedFoundAuthorDTO.getName())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.age", Is.is(expectedFoundAuthorDTO.getAge())));
     }
 }
