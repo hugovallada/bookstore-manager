@@ -2,6 +2,7 @@ package com.hugovallada.bookstoremanager.publishers.service;
 
 import com.hugovallada.bookstoremanager.publishers.dto.PublisherDTO;
 import com.hugovallada.bookstoremanager.publishers.exception.PublisherAlreadyExistsException;
+import com.hugovallada.bookstoremanager.publishers.exception.PublisherNotFoundException;
 import com.hugovallada.bookstoremanager.publishers.mapper.PublisherMapper;
 import com.hugovallada.bookstoremanager.publishers.repository.PublisherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,12 @@ public class PublisherService {
         var createdPublisher = repository.save(publisher);
 
         return publishMapper.toDTO(createdPublisher);
+    }
+
+    public PublisherDTO findById(Long id) {
+        return repository.findById(id)
+                .map(publishMapper::toDTO)
+                .orElseThrow(() -> new PublisherNotFoundException(id));
     }
 
     private void verifyIfExists(String name, String code) {

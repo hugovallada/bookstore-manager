@@ -2,6 +2,7 @@ package com.hugovallada.bookstoremanager.publishers.service;
 
 import com.hugovallada.bookstoremanager.publishers.builder.PublisherDTOBuilder;
 import com.hugovallada.bookstoremanager.publishers.exception.PublisherAlreadyExistsException;
+import com.hugovallada.bookstoremanager.publishers.exception.PublisherNotFoundException;
 import com.hugovallada.bookstoremanager.publishers.mapper.PublisherMapper;
 import com.hugovallada.bookstoremanager.publishers.repository.PublisherRepository;
 import org.hamcrest.MatcherAssert;
@@ -59,5 +60,29 @@ public class PublisherServiceTest {
                 .thenReturn(Optional.of(expectedPublisherDuplicated));
 
         Assertions.assertThrows(PublisherAlreadyExistsException.class, () -> publisherService.create(expectedPublisherToCreateDTO));
+    }
+
+    @Test
+    void whenValidIdIsGivenThenAPublisherShouldBeReturned() {
+        var expectedPublisherFoundDTO = publisherDTOBuilder.buildPublisherDTO();
+        var expectedPublisherFound = publisherMapper.toModel(expectedPublisherFoundDTO);
+
+        Mockito.when(publisherRepository.findById(expectedPublisherFoundDTO.getId()))
+                .thenReturn(Optional.of(expectedPublisherFound));
+
+        var foundPublisherDTO = publisherService.findById(expectedPublisherFoundDTO.getId());
+
+        MatcherAssert.assertThat(foundPublisherDTO, Matchers.is(Matchers.equalTo(foundPublisherDTO)));
+
+    }
+
+    @Test
+    void whenInvalidIdIsGivenThenANotFoundExceptionShouldBeThrown() {
+        var expectedPublisherFoundDTO = publisherDTOBuilder.buildPublisherDTO();
+
+        Mockito.when(publisherRepository.findById(expectedPublisherFoundDTO.getId()))
+                .thenReturn(Optional.empty());
+
+        Assertions.assertThrows(PublisherNotFoundException.class, () -> publisherService.findById(expectedPublisherFoundDTO.getId()));
     }
 }
