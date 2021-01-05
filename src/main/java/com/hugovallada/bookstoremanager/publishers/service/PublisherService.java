@@ -48,11 +48,14 @@ public class PublisherService {
     }
 
     public void delete(Long id) {
-        repository.findById(id)
-                .orElseThrow(() -> new PublisherNotFoundException(id));
-
+        verifyIfExists(id);
         repository.deleteById(id);
 
+    }
+
+    private void verifyIfExists(Long id) {
+        repository.findById(id)
+                .orElseThrow(() -> new PublisherNotFoundException(id));
     }
 
     private void verifyIfExists(String name, String code) {
