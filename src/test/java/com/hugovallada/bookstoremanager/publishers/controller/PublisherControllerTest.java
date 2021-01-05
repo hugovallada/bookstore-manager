@@ -44,7 +44,7 @@ public class PublisherControllerTest {
     }
 
     @Test
-    void whenPOSTIsCalledThenCreatedStatusShoudBeInformed() throws Exception {
+    void whenPOSTIsCalledThenCreatedStatusShouldBeInformed() throws Exception {
 
         var expectedCreatedPublisherDTO = publisherDTOBuilder.buildPublisherDTO();
 
@@ -61,7 +61,7 @@ public class PublisherControllerTest {
     }
 
     @Test
-    void whenPOSTIsCalledWithoutRequiredFieldsThenBadRequestStatusShoudBeInformed() throws Exception {
+    void whenPOSTIsCalledWithoutRequiredFieldsThenBadRequestStatusShouldBeInformed() throws Exception {
 
         var expectedCreatedPublisherDTO = publisherDTOBuilder.buildPublisherDTO();
 
@@ -72,4 +72,22 @@ public class PublisherControllerTest {
                 .content(JsonConversionUtils.asJsonString(expectedCreatedPublisherDTO)))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
+
+    @Test
+    void whenGETWithValidIdIsCalledThenOKStatusShouldBeInformed() throws Exception {
+
+        var expectedCreatedPublisherDTO = publisherDTOBuilder.buildPublisherDTO();
+
+        Mockito.when(publisherService.findById(expectedCreatedPublisherDTO.getId()))
+                .thenReturn(expectedCreatedPublisherDTO);
+
+        mockMvc.perform(MockMvcRequestBuilders.get(PUBLISHER_API_URL_PATH + "/" + expectedCreatedPublisherDTO.getId())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id", Matchers.is(expectedCreatedPublisherDTO.getId().intValue())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name", Matchers.is(expectedCreatedPublisherDTO.getName())))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.code", Matchers.is(expectedCreatedPublisherDTO.getCode())));
+    }
+
+   
 }
