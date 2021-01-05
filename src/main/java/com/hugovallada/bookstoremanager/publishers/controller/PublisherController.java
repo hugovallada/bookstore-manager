@@ -37,4 +37,10 @@ public class PublisherController implements PublisherControllerDocs {
         return service.findAll();
     }
 
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id) {
+        service.delete(id);
+    }
 }
