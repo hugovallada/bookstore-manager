@@ -1,18 +1,27 @@
 package com.hugovallada.bookstoremanager.publishers.controller;
 
+import com.hugovallada.bookstoremanager.publishers.dto.PublisherDTO;
 import com.hugovallada.bookstoremanager.publishers.service.PublisherService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/publishers")
-public class PublisherController {
+public class PublisherController implements PublisherControllerDocs {
 
     private PublisherService service;
 
     @Autowired
     public PublisherController(PublisherService service) {
         this.service = service;
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public PublisherDTO create(@RequestBody @Valid PublisherDTO publisherDTO) {
+        return service.create(publisherDTO);
     }
 }

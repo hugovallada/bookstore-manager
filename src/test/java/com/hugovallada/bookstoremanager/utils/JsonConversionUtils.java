@@ -4,18 +4,17 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.hugovallada.bookstoremanager.author.dto.AuthorDTO;
 
 public class JsonConversionUtils {
-    public static String asJsonString(AuthorDTO expectedCreatedAuthorDTO) {
-        try{
+    public static String asJsonString(Object objectDTO) {
+        try {
             var objectMapper = new ObjectMapper();
-            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,false);
+            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
             objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
             objectMapper.registerModule(new JavaTimeModule());
 
-            return objectMapper.writeValueAsString(expectedCreatedAuthorDTO);
-        }catch (Exception e){
+            return objectMapper.writeValueAsString(objectDTO);
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
