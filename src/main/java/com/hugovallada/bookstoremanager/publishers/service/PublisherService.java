@@ -8,6 +8,9 @@ import com.hugovallada.bookstoremanager.publishers.repository.PublisherRepositor
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class PublisherService {
 
@@ -35,6 +38,13 @@ public class PublisherService {
         return repository.findById(id)
                 .map(publishMapper::toDTO)
                 .orElseThrow(() -> new PublisherNotFoundException(id));
+    }
+
+    public List<PublisherDTO> findAll() {
+        return repository.findAll()
+                .stream()
+                .map(publisher -> publishMapper.toDTO(publisher))
+                .collect(Collectors.toList());
     }
 
     private void verifyIfExists(String name, String code) {

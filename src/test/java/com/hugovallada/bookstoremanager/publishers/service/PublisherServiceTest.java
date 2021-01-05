@@ -16,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
 import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
@@ -84,5 +85,30 @@ public class PublisherServiceTest {
                 .thenReturn(Optional.empty());
 
         Assertions.assertThrows(PublisherNotFoundException.class, () -> publisherService.findById(expectedPublisherFoundDTO.getId()));
+    }
+
+    @Test
+    void whenListPublisherIsCalledThenItShouldBeReturned() {
+        var expectedPublisherFoundDTO = publisherDTOBuilder.buildPublisherDTO();
+        var expectedPublisherFound = publisherMapper.toModel(expectedPublisherFoundDTO);
+
+        Mockito.when(publisherRepository.findAll())
+                .thenReturn(Collections.singletonList(expectedPublisherFound));
+
+        var foundPublishersDTO = publisherService.findAll();
+
+        MatcherAssert.assertThat(foundPublishersDTO.size(), Matchers.is(1));
+        MatcherAssert.assertThat(foundPublishersDTO.get(0), Matchers.is(Matchers.equalTo(expectedPublisherFoundDTO)));
+    }
+
+    @Test
+    void whenListPublisherIsCalledThenAnEmptyListShouldBeReturned() {
+
+        Mockito.when(publisherRepository.findAll())
+                .thenReturn(Collections.emptyList());
+
+        var foundPublishersDTO = publisherService.findAll();
+
+        MatcherAssert.assertThat(foundPublishersDTO.size(), Matchers.is(0));
     }
 }
