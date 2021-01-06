@@ -6,6 +6,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Api("System users management")
 public interface UserControllerDocs {
@@ -18,4 +19,13 @@ public interface UserControllerDocs {
             }
     )
     MessageDTO create(UserDTO userToCreateDTO);
+
+    @ApiOperation(value = "User exclusion operation")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 204, message = "Success user exclusion"),
+                    @ApiResponse(code = 404, message = "User with informed ID not found in the system")
+            }
+    )
+    void delete(@PathVariable Long id);
 }

@@ -4,6 +4,7 @@ import com.hugovallada.bookstoremanager.users.dto.MessageDTO;
 import com.hugovallada.bookstoremanager.users.dto.UserDTO;
 import com.hugovallada.bookstoremanager.users.entity.User;
 import com.hugovallada.bookstoremanager.users.exception.UserAlreadyExistsException;
+import com.hugovallada.bookstoremanager.users.exception.UserNotFoundException;
 import com.hugovallada.bookstoremanager.users.mapper.UserMapper;
 import com.hugovallada.bookstoremanager.users.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,11 @@ public class UserService {
         return creationMessage(createdUser);
     }
 
+    public void delete(Long id) {
+        verifyIfExists(id);
+        userRepository.deleteById(id);
+    }
+
     private MessageDTO creationMessage(User createdUser) {
 
         var message = String.format("User %s with ID %s successfully created",
@@ -40,6 +46,12 @@ public class UserService {
                 .build();
     }
 
+    private void verifyIfExists(Long id) {
+        var user = userRepository.findById(id);
+
+        if (user.isEmpty()) throw new UserNotFoundException(id);
+    }
+
     private void verifyIfExists(String email, String username) {
         var user = userRepository.findByEmailOrUsername(email, username);
 
@@ -47,4 +59,6 @@ public class UserService {
             throw new UserAlreadyExistsException(email, username);
         }
     }
+
+
 }

@@ -2,6 +2,7 @@ package com.hugovallada.bookstoremanager.users.service;
 
 import com.hugovallada.bookstoremanager.users.builder.UserDTOBuilder;
 import com.hugovallada.bookstoremanager.users.exception.UserAlreadyExistsException;
+import com.hugovallada.bookstoremanager.users.exception.UserNotFoundException;
 import com.hugovallada.bookstoremanager.users.mapper.UserMapper;
 import com.hugovallada.bookstoremanager.users.repository.UserRepository;
 import org.hamcrest.MatcherAssert;
@@ -66,4 +67,28 @@ public class UserServiceTest {
     }
 
 
+    @Test
+    void whenValidUserIsInformedThenItShouldBeDeleted() {
+        var expectedDeletedUserDTO = userDTOBuilder.buildUserDTO();
+        var expectedDeletedUser = userMapper.toModel(expectedDeletedUserDTO);
+
+        Mockito.when(userRepository.findById(expectedDeletedUserDTO.getId()))
+                .thenReturn(Optional.of(expectedDeletedUser));
+
+        Mockito.doNothing().when(userRepository).deleteById(expectedDeletedUserDTO.getId());
+
+        userService.delete(expectedDeletedUserDTO.getId());
+
+        Mockito.verify(userRepository, Mockito.times(1)).deleteById(expectedDeletedUserDTO.getId());
+    }
+
+    @Test
+    void whenInvalidUserIsInformedThenAnExceptionShouldBeThrown() {
+        var expectedDeletedUserDTO = userDTOBuilder.buildUserDTO();
+
+        Mockito.when(userRepository.findById(expectedDeletedUserDTO.getId()))
+                .thenReturn(Optional.empty());
+
+        Assertions.assertThrows(UserNotFoundException.class, () -> userService.delete(expectedDeletedUserDTO.getId()));
+    }
 }
