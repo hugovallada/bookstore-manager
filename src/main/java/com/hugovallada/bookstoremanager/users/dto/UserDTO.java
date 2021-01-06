@@ -1,7 +1,6 @@
 package com.hugovallada.bookstoremanager.users.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.hugovallada.bookstoremanager.books.entity.Book;
 import com.hugovallada.bookstoremanager.users.entity.Gender;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,7 +10,6 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.validation.constraints.*;
 import java.time.LocalDate;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -50,7 +48,5 @@ public class UserDTO {
     @NotNull
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private LocalDate birthDate;
-
-    private List<Book> books;
 
 }
