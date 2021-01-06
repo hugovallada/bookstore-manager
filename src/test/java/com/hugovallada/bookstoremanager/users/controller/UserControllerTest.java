@@ -72,4 +72,15 @@ public class UserControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
 
     }
+
+    @Test
+    void whenDELETEIsCalledThenNoContentShouldBeInformed() throws Exception {
+        var expectedUserDTO = userDTOBuilder.buildUserDTO();
+
+        Mockito.doNothing().when(userService).delete(expectedUserDTO.getId());
+
+        mockMvc.perform(MockMvcRequestBuilders.delete(USERS_API_URL + "/" + expectedUserDTO.getId())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
+    }
 }
