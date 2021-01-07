@@ -83,4 +83,23 @@ public class UserControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
     }
+
+    @Test
+    void whenPUTIsCalledThenOKStatusShouldBeReturned() throws Exception {
+        var expectedUserDTO = userDTOBuilder.buildUserDTO();
+        expectedUserDTO.setUsername("valladahugo");
+
+        var expectedMessage = "User valladahugo with ID 1 successfully updated";
+        var expectedMessageDTO = MessageDTO.builder().message(expectedMessage).build();
+
+        Mockito.when(userService.update(expectedUserDTO.getId(), expectedUserDTO))
+                .thenReturn(expectedMessageDTO);
+
+        mockMvc.perform(MockMvcRequestBuilders.put(USERS_API_URL + "/" + expectedUserDTO.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonConversionUtils.asJsonString(expectedUserDTO)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message", Matchers.is(expectedMessage)));
+
+    }
 }

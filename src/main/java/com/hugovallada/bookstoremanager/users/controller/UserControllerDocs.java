@@ -6,7 +6,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import org.springframework.web.bind.annotation.PathVariable;
 
 @Api("System users management")
 public interface UserControllerDocs {
@@ -27,5 +26,14 @@ public interface UserControllerDocs {
                     @ApiResponse(code = 404, message = "User with informed ID not found in the system")
             }
     )
-    void delete(@PathVariable Long id);
+    void delete(Long id);
+
+    @ApiOperation(value = "User update operation")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, message = "Success user updated"),
+                    @ApiResponse(code = 400, message = "Missing required fields, or an error on validation field rules")
+            }
+    )
+    MessageDTO update(Long id, UserDTO userDTO);
 }
