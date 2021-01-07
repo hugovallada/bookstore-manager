@@ -10,6 +10,9 @@ import com.hugovallada.bookstoremanager.users.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static com.hugovallada.bookstoremanager.users.utils.MessageDTOUtils.creationMessage;
+import static com.hugovallada.bookstoremanager.users.utils.MessageDTOUtils.updatedMessage;
+
 @Service
 public class UserService {
 
@@ -36,14 +39,27 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    private MessageDTO creationMessage(User createdUser) {
+    public MessageDTO update(Long id, UserDTO userDTO) {
+        var foundUser = verifyAndGetIfExists(id);
 
-        var message = String.format("User %s with ID %s successfully created",
-                createdUser.getUsername(), createdUser.getId());
+        userDTO.setId(foundUser.getId());
 
-        return MessageDTO.builder()
-                .message(message)
-                .build();
+        var userToUpdate = userMapper.toModel(userDTO);
+        userToUpdate.setCreatedDate(foundUser.getCreatedDate());
+
+        var updatedUser = userRepository.save(userToUpdate);
+
+        return updatedMessage(updatedUser);
+
+    }
+
+
+    private User verifyAndGetIfExists(Long id) {
+        var user = userRepository.findById(id);
+
+        if (user.isEmpty()) throw new UserNotFoundException(id);
+
+        return user.get();
     }
 
     private void verifyIfExists(Long id) {

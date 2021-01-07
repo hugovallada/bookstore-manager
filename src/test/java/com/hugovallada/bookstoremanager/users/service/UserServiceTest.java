@@ -91,4 +91,36 @@ public class UserServiceTest {
 
         Assertions.assertThrows(UserNotFoundException.class, () -> userService.delete(expectedDeletedUserDTO.getId()));
     }
+
+    @Test
+    void whenExistingUserIsInformedThenItShouldBeUpdated() {
+        var expectedUserDTO = userDTOBuilder.buildUserDTO();
+        expectedUserDTO.setUsername("valladahugo");
+        var expectedUser = userMapper.toModel(expectedUserDTO);
+        var expectedMessage = "User valladahugo with ID 1 successfully updated";
+
+        Mockito.when(userRepository.findById(expectedUserDTO.getId()))
+                .thenReturn(Optional.of(expectedUser));
+
+        Mockito.when(userRepository.save(expectedUser))
+                .thenReturn(expectedUser);
+
+        var successMessage = userService.update(expectedUserDTO.getId(), expectedUserDTO);
+
+        MatcherAssert.assertThat(successMessage.getMessage(), Matchers.is(Matchers.equalTo(expectedMessage)));
+    }
+
+    @Test
+    void whenNotExistingUserIsInformedThenAnExceptionShouldBeThrown() {
+        var expectedUserDTO = userDTOBuilder.buildUserDTO();
+        expectedUserDTO.setUsername("valladahugo");
+
+
+        Mockito.when(userRepository.findById(expectedUserDTO.getId()))
+                .thenReturn(Optional.empty());
+
+        Assertions.assertThrows(UserNotFoundException.class, () -> {
+            userService.update(expectedUserDTO.getId(), expectedUserDTO);
+        });
+    }
 }
